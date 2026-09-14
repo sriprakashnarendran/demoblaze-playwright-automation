@@ -1,3 +1,4 @@
+[![Playwright Tests](https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/workflows/playwright.yml)
 # Demoblaze Playwright Automation Framework
 
 Playwright + TypeScript framework for **UI, API, Mobile, Database and Cross-Layer E2E testing** of Demoblaze.
