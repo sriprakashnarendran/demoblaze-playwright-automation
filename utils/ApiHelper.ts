@@ -26,11 +26,7 @@ export class ApiHelper {
   private async attachResponse(name: string, response: APIResponse, body: unknown): Promise<void> {
     await allure.attachment(`${name} - Status`, String(response.status()), ContentType.TEXT);
     const attachment = typeof body === "string" ? body : JSON.stringify(body, null, 2);
-    await allure.attachment(
-      `${name} - Body`,
-      attachment,
-      typeof body === "string" ? ContentType.TEXT : ContentType.JSON,
-    );
+    await allure.attachment(`${name} - Body`, attachment, typeof body === "string" ? ContentType.TEXT : ContentType.JSON);
   }
 
   private async validate(name: string, response: APIResponse): Promise<unknown> {
@@ -113,11 +109,7 @@ export class ApiHelper {
     await this.validate(apiConfig.allure.deleteCart, response);
   }
 
-  async waitForCartProduct(
-    token: string,
-    productId: number,
-    timeout = apiConfig.defaults.pollingTimeout,
-  ): Promise<void> {
+  async waitForCartProduct(token: string, productId: number, timeout = apiConfig.defaults.pollingTimeout): Promise<void> {
     const start = Date.now();
     let attempts = 0;
     while (Date.now() - start < timeout) {
@@ -130,11 +122,7 @@ export class ApiHelper {
       const items = this.cartItems(body);
       const found = items.some((item) => Number(this.productId(item)) === Number(productId));
       if (found) {
-        await allure.attachment(
-          "Cart Synchronization",
-          `Product ${productId} found after ${attempts} attempt(s)`,
-          ContentType.TEXT,
-        );
+        await allure.attachment("Cart Synchronization", `Product ${productId} found after ${attempts} attempt(s)`, ContentType.TEXT);
         return;
       }
       await new Promise((resolve) => setTimeout(resolve, apiConfig.defaults.pollingInterval));
