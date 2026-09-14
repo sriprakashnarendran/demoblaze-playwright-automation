@@ -2,7 +2,7 @@ import { APIResponse, expect } from "@playwright/test";
 import * as allure from "allure-js-commons";
 import { ContentType } from "allure-js-commons";
 import { randomUUID } from "crypto";
-import { apiConfig } from "../config/apiConfig";
+import { apiConfig } from "../config/apiconfig";
 import { ApiClient } from "./ApiClient";
 
 export class ApiHelper {
