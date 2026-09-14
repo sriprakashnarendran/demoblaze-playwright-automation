@@ -2,7 +2,7 @@ import { test } from "@playwright/test";
 import * as allure from "allure-js-commons";
 import { ApiClient } from "../../utils/ApiClient";
 import { ApiHelper } from "../../utils/ApiHelper";
-import { data } from "../../utils/TestData";
+import { TestDataService } from "../../utils/TestDataService";
 
 test("@api API E2E - complete purchase flow", async ({ request }) => {
   await allure.epic("Demoblaze");
@@ -14,6 +14,7 @@ test("@api API E2E - complete purchase flow", async ({ request }) => {
   const unique = Date.now();
   const username = `apiuser_${unique}`;
   const password = `Api@${unique}`;
+   const data = await new TestDataService().getPurchaseData();
 
   await allure.step("Signup", () => api.signup(username, password));
   const token = await allure.step("Login", () => api.login(username, password));

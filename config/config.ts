@@ -15,6 +15,10 @@ export const config = {
   api: {
     baseURL: process.env.API_URL ?? "https://api.demoblaze.com",
   },
+  db: {
+    url: requireEnv("SUPABASE_URL"),
+    key: requireEnv("SUPABASE_SECRET_KEY"),
+  },
   timeout: {
     test: 60_000,
     expect: 10_000,

@@ -14,6 +14,8 @@ jobs:
       API_URL: https://api.demoblaze.com
       UI_USERNAME: ${{ secrets.UI_USERNAME }}
       UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
