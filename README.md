@@ -1,77 +1,66 @@
 # Demoblaze Playwright Automation Framework
 
-Playwright + TypeScript automation framework for **UI, API, Mobile and Cross-Layer E2E testing** of Demoblaze.
+Playwright + TypeScript framework for **UI, API, Mobile, Database and Cross-Layer E2E testing** of Demoblaze.
 
 ## Tech Stack
 
-- Playwright
-- TypeScript
-- Page Object Model
-- Custom Fixtures
-- APIRequestContext
-- Allure Report
-- Playwright HTML Report
-- GitHub Actions
-- Jenkins
-- Playwright MCP
+* Playwright + TypeScript
+* Page Object Model
+* Custom Fixtures
+* APIRequestContext
+* Supabase PostgreSQL
+* Allure + Playwright HTML Report
+* GitHub Actions
+* Playwright MCP
 
 ## Project Structure
 
 ```text
 demoblaze_qa_automation/
-├── auth/                 # Storage state
-├── config/               # Environment configuration
-├── fixtures/             # Custom fixtures
-├── pages/                # Page Objects
-├── utils/                # API/Auth helpers
-├── testdata/             # Test data & expected values
+├── auth/
+├── config/
+│   ├── config.ts
+│   └── apiConfig.ts
+├── fixtures/
+├── pages/
+├── utils/
+│   ├── ApiClient.ts
+│   ├── ApiHelper.ts
+│   ├── AuthHelper.ts
+│   ├── DatabaseClient.ts
+│   └── TestDataService.ts
 ├── tests/
 │   ├── auth.setup.ts
-│   ├── ui/               # UI tests
-│   ├── api/              # API tests
-│   └── e2e/              # API + UI cross-layer tests
-├── .github/workflows/    # GitHub Actions
-├── .vscode/mcp.json      # Playwright MCP
-├── playwright.config.ts
-└── package.json
+│   ├── ui/
+│   ├── api/
+│   └── e2e/
+├── .github/workflows/
+├── .vscode/mcp.json
+└── playwright.config.ts
 ```
 
 ## Architecture
 
 ```text
-                         Playwright
-                             │
-                    ┌────────┴────────┐
-                    │      Setup      │
-                    │   AuthHelper    │
-                    └────────┬────────┘
-                             │
-                      storageState.json
-                             │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-             Web           Mobile       Cross-Layer
-        Desktop Chrome     Pixel 7        API ↔ UI
-              │              │              │
-              └──────────────┼──────────────┘
-                             ▼
-                     Custom Fixtures
-                             │
-                     Page Objects
-                             │
-                      Demoblaze UI
+                    Playwright
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+       UI              API          Cross-Layer
+        │               │               │
+    Page Objects     ApiHelper        API ↔ UI
+        │               │               │
+        ▼           ApiClient           ▼
+ Demoblaze UI           │        Demoblaze UI/API
+                        ▼
+                  Demoblaze API
 
-                  API Tests / Cross-Layer
-                             │
-                             ▼
-                         ApiHelper
-                             │
-                         ApiClient
-                             │
-                       apiRequest
-                             │
-                             ▼
-                      Demoblaze API
+                 TestDataService
+                        │
+                 DatabaseClient
+                        │
+                        ▼
+               Supabase PostgreSQL
 ```
 
 ## Authentication
@@ -79,40 +68,56 @@ demoblaze_qa_automation/
 Authentication uses Playwright `storageState`.
 
 ```text
-Check storageState
-       │
-   ┌───┴───┐
-   ▼       ▼
- Valid   Missing/Expired
-   │       │
- Reuse   UI Login
-           │
-           ▼
-      Save New State
+Check Session
+     ↓
+Valid? ── Yes → Reuse
+     │
+     No
+     ↓
+UI Login
+     ↓
+Save storageState
 ```
 
-`AuthHelper` handles session validation and creation, keeping `auth.setup.ts` minimal.
+`AuthHelper` handles session validation, login and state creation.
 
-## Test Execution
+## Test Data
 
-Projects:
+Test data is stored in Supabase PostgreSQL.
 
 ```text
-setup
-├── web        → Desktop Chrome
-├── mobile     → Pixel 7
-└── cross-layer → API + UI
-
-api            → API tests
+Test
+ ↓
+TestDataService
+ ↓
+DatabaseClient
+ ↓
+Supabase
 ```
 
-Run all tests:
+Example:
+
+```ts
+const data = await new TestDataService()
+  .getPurchaseData("purchase_default");
+```
+
+Configuration is separated as:
+
+```text
+.env          → URLs, credentials, DB secrets
+config.ts     → Environment and timeouts
+apiConfig.ts  → API endpoints and constants
+Supabase      → Test data and expected values
+```
+
+## Test Execution
 
 ```bash
 npx playwright test
 ```
 
-Run individually:
+Individual projects:
 
 ```bash
 npx playwright test --project=web
@@ -121,9 +126,13 @@ npx playwright test --project=api
 npx playwright test --project=cross-layer
 ```
 
-## Cross-Layer E2E
+Cross-layer:
 
-Cross-layer testing performs API and UI operations using the same application user.
+```bash
+npx playwright test --project=cross-layer --workers=1
+```
+
+## Cross-Layer Flow
 
 ```text
 API Login
@@ -134,7 +143,9 @@ UI Validate Product
    ↓
 API Add To Cart
    ↓
-UI Validate API Added Product
+Wait For Cart Product
+   ↓
+UI Validate Cart
    ↓
 API Validate Cart
    ↓
@@ -145,41 +156,28 @@ UI Validate Purchase
 API Cleanup
 ```
 
-A dedicated `apiRequest` fixture uses:
+A dedicated `apiRequest` fixture keeps endpoints separated:
 
 ```text
 UI  → https://www.demoblaze.com
 API → https://api.demoblaze.com
 ```
 
-Cross-layer tests use a single worker to prevent shared cart/session conflicts.
+`waitForCartProduct()` polls the API before UI validation to reduce intermittent cross-layer failures.
 
 ## Framework Design
 
-```text
-Tests
-  ↓
-Fixtures
-  ↓
-Pages / Helpers
-  ↓
-BasePage / ApiClient
-  ↓
-Playwright
-  ↓
-Demoblaze UI + API
-```
-
-- **Page Objects** → UI locators and actions
-- **ApiClient** → Generic HTTP methods
-- **ApiHelper** → API business operations
-- **AuthHelper** → Authentication/session handling
-- **TestData** → Input and expected data
-- **Fixtures** → Reusable Page Objects and API context
+* **Page Objects** → UI actions and locators
+* **ApiClient** → Generic HTTP methods
+* **ApiHelper** → API business logic
+* **AuthHelper** → Authentication and storage state
+* **DatabaseClient** → Supabase connection
+* **TestDataService** → Database test-data retrieval
+* **Fixtures** → Reusable UI/API objects
 
 ## Reports
 
-Playwright HTML:
+Playwright:
 
 ```bash
 npx playwright show-report
@@ -192,30 +190,17 @@ allure generate allure-results --clean -o allure-report
 allure open allure-report
 ```
 
-Failures retain **screenshots, videos and traces**.
+Failures retain screenshots, videos, traces and API attachments.
 
 ## CI/CD
 
-Supported through:
+Supported with:
 
-- GitHub Actions
+* GitHub Actions
 
+'''''''*****And can extend for Jenkins,Buildkite,AWS*****'''''''''
 
-CI flow:
-
-```text
-Git Push / PR
-     ↓
-Install Dependencies
-     ↓
-Install Browsers
-     ↓
-Run Tests
-     ↓
-Playwright + Allure Reports
-```
-
-Credentials are managed through environment variables / CI secrets and are not hardcoded in tests.
+Secrets are stored in environment variables / CI credentials and are not hardcoded.
 
 ## Author
 
