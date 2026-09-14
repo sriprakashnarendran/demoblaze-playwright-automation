@@ -5,7 +5,6 @@ import { ApiClient } from "../../utils/ApiClient";
 import { ApiHelper } from "../../utils/ApiHelper";
 import { TestDataService } from "../../utils/TestDataService";
 
-
 test("@e2e Cross Layer - API and UI purchase flow", async ({ apiRequest, homePage, productPage, cartPage }) => {
   await allure.epic("Demoblaze");
   await allure.feature("Cross Layer Integration");
@@ -26,7 +25,16 @@ test("@e2e Cross Layer - API and UI purchase flow", async ({ apiRequest, homePag
   await allure.step("UI - Validate API added product", () => cartPage.expectProduct(data.products.name));
   await allure.step("API - Validate product in cart", () => api.validateCart(token, data.products.id));
   await allure.step("UI - Open Place Order", () => cartPage.openPlaceOrder());
-  await allure.step("UI - Complete checkout", () => cartPage.checkout(data.checkout.name, data.checkout.country, data.checkout.city, data.checkout.card, data.checkout.month, data.checkout.year));
+  await allure.step("UI - Complete checkout", () =>
+    cartPage.checkout(
+      data.checkout.name,
+      data.checkout.country,
+      data.checkout.city,
+      data.checkout.card,
+      data.checkout.month,
+      data.checkout.year,
+    ),
+  );
   await allure.step("UI - Validate purchase", () => cartPage.expectPurchaseSuccessful(data.expected.purchaseSuccess));
   await allure.step("UI - Close confirmation", () => cartPage.closePurchaseConfirmation());
   await allure.step("API - Cleanup cart", () => api.cleanup(token));

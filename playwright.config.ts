@@ -47,18 +47,18 @@ export default defineConfig({
       testDir: "./tests/api",
       use: { baseURL: config.api.baseURL },
     },
-     {
-    name: "cross-layer",
-    testDir: "./tests/e2e",
-    dependencies: ["setup"],
-    fullyParallel: false,
-    workers: 1,
-    use: {
-      ...devices["Desktop Chrome"],
-      storageState: authFile,
-      baseURL: config.ui.baseURL
-    }
-  },
+    {
+      name: "cross-layer",
+      testDir: "./tests/e2e",
+      dependencies: ["setup"],
+      fullyParallel: false,
+      workers: 1,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: authFile,
+        baseURL: config.ui.baseURL,
+      },
+    },
   ],
   outputDir: "test-results",
 });

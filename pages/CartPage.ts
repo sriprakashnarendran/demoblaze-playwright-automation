@@ -33,7 +33,14 @@ export class CartPage extends BasePage {
     await this.placeOrderButton.click();
     await expect(this.orderModal).toBeVisible();
   }
-  async checkout(name: string, country: string, city: string, card: string, month: string, year: string): Promise<void> {
+  async checkout(
+    name: string,
+    country: string,
+    city: string,
+    card: string,
+    month: string,
+    year: string,
+  ): Promise<void> {
     await this.nameInput.fill(name);
     await this.countryInput.fill(country);
     await this.cityInput.fill(city);

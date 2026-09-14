@@ -14,7 +14,7 @@ test("@api API E2E - complete purchase flow", async ({ request }) => {
   const unique = Date.now();
   const username = `apiuser_${unique}`;
   const password = `Api@${unique}`;
-   const data = await new TestDataService().getPurchaseData();
+  const data = await new TestDataService().getPurchaseData();
 
   await allure.step("Signup", () => api.signup(username, password));
   const token = await allure.step("Login", () => api.login(username, password));

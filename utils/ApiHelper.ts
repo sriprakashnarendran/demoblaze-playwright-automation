@@ -139,9 +139,7 @@ export class ApiHelper {
       }
       await new Promise((resolve) => setTimeout(resolve, apiConfig.defaults.pollingInterval));
     }
-    throw new Error(
-      `Product ${productId} was not available after ${attempts} attempts within ${timeout}ms`,
-    );
+    throw new Error(`Product ${productId} was not available after ${attempts} attempts within ${timeout}ms`);
   }
 
   private isRecord(value: unknown): value is Record<string, unknown> {

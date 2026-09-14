@@ -14,7 +14,16 @@ test("@regression UI E2E - add product to cart and checkout", async ({ homePage,
   await allure.step("Open cart", () => homePage.openCart());
   await allure.step("Validate product in cart", () => cartPage.expectProduct(data.products.name));
   await allure.step("Open Place Order", () => cartPage.openPlaceOrder());
-  await allure.step("Enter checkout details and purchase", () => cartPage.checkout(data.checkout.name, data.checkout.country, data.checkout.city, data.checkout.card, data.checkout.month, data.checkout.year));
+  await allure.step("Enter checkout details and purchase", () =>
+    cartPage.checkout(
+      data.checkout.name,
+      data.checkout.country,
+      data.checkout.city,
+      data.checkout.card,
+      data.checkout.month,
+      data.checkout.year,
+    ),
+  );
   await allure.step("Validate successful purchase", async () => {
     await cartPage.expectPurchaseSuccessful(data.expected.purchaseSuccess);
     await cartPage.closePurchaseConfirmation();
