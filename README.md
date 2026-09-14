@@ -1,210 +1,264 @@
 [![Playwright Tests](https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/workflows/playwright.yml)
 
-# Demoblaze Playwright Automation Framework
+Demoblaze Playwright Automation Framework
 
-Playwright + TypeScript framework for **UI, API, Mobile, Database and Cross-Layer E2E testing** of Demoblaze.
 
-## Tech Stack
 
-- Playwright + TypeScript
-- Page Object Model
-- Custom Fixtures
-- APIRequestContext
-- Supabase PostgreSQL
-- Allure + Playwright HTML Report
-- GitHub Actions
-- Playwright MCP
+Playwright + TypeScript automation framework covering Web UI, API, Mobile Web, Database Integration, Cross-Layer E2E, CI/CD, Allure Reporting, Code Quality, and Playwright MCP.
 
-## Project Structure
+Tech Stack
 
-```text
-demoblaze_qa_automation/
-├── auth/
-├── config/
-│   ├── config.ts
-│   └── apiConfig.ts
-├── fixtures/
-├── pages/
-├── utils/
-│   ├── ApiClient.ts
-│   ├── ApiHelper.ts
-│   ├── AuthHelper.ts
-│   ├── DatabaseClient.ts
-│   └── TestDataService.ts
-├── tests/
-│   ├── auth.setup.ts
-│   ├── ui/
-│   ├── api/
-│   └── e2e/
-├── .github/workflows/
-├── .vscode/mcp.json
-└── playwright.config.ts
-```
+Playwright + TypeScript
 
-## Architecture
+Page Object Model
 
-```text
-                    Playwright
-                        │
-        ┌───────────────┼───────────────┐
-        ▼               ▼               ▼
-       UI              API          Cross-Layer
-        │               │               │
-    Page Objects     ApiHelper        API ↔ UI
-        │               │               │
-        ▼           ApiClient           ▼
- Demoblaze UI           │        Demoblaze UI/API
-                        ▼
-                  Demoblaze API
+Custom Fixtures
 
-                 TestDataService
-                        │
-                 DatabaseClient
-                        │
-                        ▼
-               Supabase PostgreSQL
-```
+Playwright APIRequestContext
 
-## Authentication
+Supabase PostgreSQL
 
-Authentication uses Playwright `storageState`.
+Zod API Schema Validation
 
-```text
-Check Session
-     ↓
-Valid? ── Yes → Reuse
-     │
-     No
-     ↓
-UI Login
-     ↓
-Save storageState
-```
+Allure + Playwright HTML Reports
 
-`AuthHelper` handles session validation, login and state creation.
+GitHub Actions
 
-## Test Data
+ESLint + Prettier
 
-Test data is stored in Supabase PostgreSQL.
+Playwright MCP
 
-```text
-Test
- ↓
-TestDataService
- ↓
-DatabaseClient
- ↓
-Supabase
-```
+Architecture
 
-Example:
+                    Playwright + TypeScript
+                            |
+        ---------------------------------------------
+        |                    |                      |
+       UI                   API                Cross-Layer
+        |                    |                      |
+   Page Objects          ApiHelper               API <-> UI
+        |                    |
+     BasePage            ApiClient
+        |                    |
+        ----------- Custom Fixtures ---------------
+                            |
+                 -----------------------
+                 |                     |
+             Config                Test Data
+                 |                     |
+          config/apiConfig       TestDataService
+                                       |
+                                 DatabaseClient
+                                       |
+                                  Supabase DB
 
-```ts
-const data = await new TestDataService().getPurchaseData("purchase_default");
-```
+Project Structure
 
-Configuration is separated as:
+config/      -> Environment and API configuration
+fixtures/    -> Custom Playwright fixtures
+models/      -> Zod schemas / API models
+pages/       -> Page Object Model classes
+utils/       -> API, Auth, DB and Test Data helpers
+tests/ui/    -> Web and Mobile UI tests
+tests/api/   -> API tests
+tests/e2e/   -> Cross-layer tests
+.github/     -> GitHub Actions workflow
+.vscode/     -> Playwright MCP configuration
 
-```text
-.env          → URLs, credentials, DB secrets
-config.ts     → Environment and timeouts
-apiConfig.ts  → API endpoints and constants
-Supabase      → Test data and expected values
-```
+Test Coverage
 
-## Test Execution
+Area
 
-```bash
+Coverage
+
+Web
+
+Login, Product, Cart, Checkout, Negative Login
+
+API
+
+Login, Product, Cart, Negative Tests, Schema Validation
+
+Mobile Web
+
+Pixel 7 device emulation
+
+Database
+
+Supabase-driven test data
+
+Cross-Layer
+
+API -> UI -> API validation
+
+CI/CD
+
+Parallel GitHub Actions execution
+
+Code Quality
+
+TypeScript, ESLint, Prettier
+
+Reporting
+
+Individual + Combined Allure reports
+
+Authentication
+
+Playwright storageState is used to reuse authenticated sessions.
+
+auth/storageState.json
+
+The setup project validates or regenerates the authenticated state before dependent UI projects execute.
+
+Cross-Layer Flow
+
+API Login
+   |
+API Get Product
+   |
+UI Validate Product
+   |
+API Add To Cart
+   |
+API Poll Cart
+   |
+UI Validate API-Added Product
+   |
+API Validate Same Cart
+   |
+UI Checkout
+   |
+API Cleanup
+
+Cross-layer tests run with 1 worker because they use shared account/cart state.
+
+Running Tests
+
+All Tests
+
 npx playwright test
-```
 
-Individual projects:
+Individual Suites
 
-```bash
 npx playwright test --project=web
 npx playwright test --project=mobile
 npx playwright test --project=api
-npx playwright test --project=cross-layer
-```
-
-Cross-layer:
-
-```bash
 npx playwright test --project=cross-layer --workers=1
-```
 
-## Cross-Layer Flow
+Code Quality
 
-```text
-API Login
-   ↓
-API Get Product
-   ↓
-UI Validate Product
-   ↓
-API Add To Cart
-   ↓
-Wait For Cart Product
-   ↓
-UI Validate Cart
-   ↓
-API Validate Cart
-   ↓
-UI Checkout
-   ↓
-UI Validate Purchase
-   ↓
-API Cleanup
-```
+npm run typecheck
+npm run lint
+npm run format:check
 
-A dedicated `apiRequest` fixture keeps endpoints separated:
+Fix formatting:
 
-```text
-UI  → https://www.demoblaze.com
-API → https://api.demoblaze.com
-```
+npm run format
 
-`waitForCartProduct()` polls the API before UI validation to reduce intermittent cross-layer failures.
+Fix ESLint issues where supported:
 
-## Framework Design
+npm run lint:fix
 
-- **Page Objects** → UI actions and locators
-- **ApiClient** → Generic HTTP methods
-- **ApiHelper** → API business logic
-- **AuthHelper** → Authentication and storage state
-- **DatabaseClient** → Supabase connection
-- **TestDataService** → Database test-data retrieval
-- **Fixtures** → Reusable UI/API objects
+CI/CD
 
-## Reports
+GitHub Actions runs a quality gate first:
 
-Playwright:
+TypeScript
+   |
+ESLint
+   |
+Prettier
+   |
+-----------------------------------------
+|           |           |               |
+Web       Mobile       API         Cross-Layer
+2 workers  2 workers   2 workers      1 worker
+|           |           |               |
+-----------------------------------------
+                    |
+            Combined Allure Report
 
-```bash
+Independent suites run in parallel, while the shared-state Cross-Layer suite is isolated with one worker.
+
+Reports
+
+Each suite produces its own report artifacts:
+
+playwright-report-web
+playwright-report-mobile
+playwright-report-api
+playwright-report-cross-layer
+
+allure-results-web
+allure-results-mobile
+allure-results-api
+allure-results-cross-layer
+
+After all suites complete, CI merges the Allure results and generates:
+
+combined-allure-report
+
+This provides one final Allure report containing Web + Mobile + API + Cross-Layer results while retaining individual suite reports for debugging.
+
+Local Reports
+
 npx playwright show-report
-```
+npm run allure:generate
+npm run allure:open
 
-Allure:
+Database Integration
 
-```bash
-allure generate allure-results --clean -o allure-report
-allure open allure-report
-```
+Test
+ |
+TestDataService
+ |
+DatabaseClient
+ |
+Supabase PostgreSQL
 
-Failures retain screenshots, videos, traces and API attachments.
+Test data is maintained outside test logic for better reuse and maintainability.
 
-## CI/CD
+Playwright MCP
 
-Supported with:
+Playwright MCP is configured in:
 
-- GitHub Actions
+.vscode/mcp.json
 
-'''''''_****And can extend for Jenkins,Buildkite,AWS****_'''''''''
+It is used as a development/debugging aid and is not required for CI execution.
 
-Secrets are stored in environment variables / CI credentials and are not hardcoded.
+Environment Variables
 
-## Author
+BASE_URL=https://www.demoblaze.com
+API_URL=https://api.demoblaze.com
+UI_USERNAME=<username>
+UI_PASSWORD=<password>
+SUPABASE_URL=<supabase-url>
+SUPABASE_SECRET_KEY=<supabase-secret-key>
 
-**Sri Prakash Narendran**
+Sensitive values are stored in .env locally and GitHub Secrets in CI.
 
-Playwright + TypeScript QA Automation Framework
+Future Enhancements
+
+Visual regression testing
+
+Accessibility baselining
+
+Native mobile automation with Appium
+
+Multi-environment execution
+
+Dockerized execution
+
+Performance testing
+
+Assignment Scope
+
+Demonstrating framework architecture, Web, API, Mobile Web, DB Integration, Cross-Layer E2E, CI/CD, code-quality gates, reporting, and MCP integration.
+
+Author
+
+Sri Prakash Narendran
+
+GitHub: sriprakashnarendran
+Repository: demoblaze-playwright-automation
