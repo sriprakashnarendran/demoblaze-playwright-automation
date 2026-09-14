@@ -20,7 +20,7 @@ export default defineConfig({
   use: {
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    video: "on",
     actionTimeout: config.timeout.action,
     navigationTimeout: config.timeout.navigation,
   },
@@ -47,6 +47,18 @@ export default defineConfig({
       testDir: "./tests/api",
       use: { baseURL: config.api.baseURL },
     },
+     {
+    name: "cross-layer",
+    testDir: "./tests/e2e",
+    dependencies: ["setup"],
+    fullyParallel: false,
+    workers: 1,
+    use: {
+      ...devices["Desktop Chrome"],
+      storageState: authFile,
+      baseURL: config.ui.baseURL
+    }
+  },
   ],
   outputDir: "test-results",
 });

@@ -1,4 +1,5 @@
-import { expect, test as base } from "@playwright/test";
+import { APIRequestContext, expect, request, test as base } from "@playwright/test";
+import { config } from "../config/config";
 import { CartPage } from "../pages/CartPage";
 import { HomePage } from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
@@ -8,6 +9,7 @@ type Fixtures = {
   loginPage: LoginPage;
   productPage: ProductPage;
   cartPage: CartPage;
+  apiRequest: APIRequestContext;
 };
 export const test = base.extend<Fixtures>({
   homePage: async ({ page }, use) => {
@@ -21,6 +23,14 @@ export const test = base.extend<Fixtures>({
   },
   cartPage: async ({ page }, use) => {
     await use(new CartPage(page));
+  },
+  apiRequest: async ({ }, use) => {
+    const context = await request.newContext({
+      baseURL: config.api.baseURL,
+      extraHTTPHeaders: { "Content-Type": "application/json" },
+    });
+    await use(context);
+    await context.dispose();
   },
 });
 export { expect };
