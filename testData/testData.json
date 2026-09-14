@@ -1,0 +1,14 @@
+{
+  "products": {
+    "name": "Samsung galaxy s6",
+    "id": 1
+  },
+  "checkout": {
+    "name": "Testsri",
+    "country": "India",
+    "city": "Chennai",
+    "card": "4111111111111111",
+    "month": "12",
+    "year": "2030"
+  }
+}
