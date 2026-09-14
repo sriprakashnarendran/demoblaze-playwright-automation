@@ -12,6 +12,7 @@ export default tseslint.config(
       "allure-results/**",
       "allure-report/**",
       "auth/**",
+      "tests-examples/**",
     ],
   },
 
@@ -21,18 +22,14 @@ export default tseslint.config(
 
   {
     files: ["**/*.ts"],
-
     languageOptions: {
       globals: {
         ...globals.node,
         ...globals.browser,
       },
     },
-
     rules: {
-      "@typescript-eslint/no-explicit-any":
-        "error",
-
+      "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -40,16 +37,17 @@ export default tseslint.config(
           varsIgnorePattern: "^_",
         },
       ],
-
       "no-console": "off",
     },
   },
 
   {
-    ...playwright.configs[
-      "flat/recommended"
-    ],
-
+    ...playwright.configs["flat/recommended"],
     files: ["tests/**/*.ts"],
+    rules: {
+      ...playwright.configs["flat/recommended"].rules,
+      "playwright/expect-expect": "off",
+      "playwright/consistent-spacing-between-blocks": "off",
+    },
   },
 );
