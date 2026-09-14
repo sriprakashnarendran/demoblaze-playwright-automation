@@ -2,34 +2,24 @@
 
 Demoblaze Playwright Automation Framework
 
+Playwright + TypeScript automation framework covering **Web UI, API, Mobile Web, Database Integration, Cross-Layer E2E, CI/CD, Allure Reporting, Code Quality, and Playwright MCP**.
 
+## Tech Stack
 
-Playwright + TypeScript automation framework covering Web UI, API, Mobile Web, Database Integration, Cross-Layer E2E, CI/CD, Allure Reporting, Code Quality, and Playwright MCP.
+- Playwright + TypeScript
+- Page Object Model
+- Custom Fixtures
+- Playwright APIRequestContext
+- Supabase PostgreSQL
+- Zod API Schema Validation
+- Allure + Playwright HTML Reports
+- GitHub Actions
+- ESLint + Prettier
+- Playwright MCP
 
-Tech Stack
+## Architecture
 
-Playwright + TypeScript
-
-Page Object Model
-
-Custom Fixtures
-
-Playwright APIRequestContext
-
-Supabase PostgreSQL
-
-Zod API Schema Validation
-
-Allure + Playwright HTML Reports
-
-GitHub Actions
-
-ESLint + Prettier
-
-Playwright MCP
-
-Architecture
-
+```text
                     Playwright + TypeScript
                             |
         ---------------------------------------------
@@ -51,9 +41,11 @@ Architecture
                                  DatabaseClient
                                        |
                                   Supabase DB
+```
 
-Project Structure
+## Project Structure
 
+```text
 config/      -> Environment and API configuration
 fixtures/    -> Custom Playwright fixtures
 models/      -> Zod schemas / API models
@@ -64,55 +56,34 @@ tests/api/   -> API tests
 tests/e2e/   -> Cross-layer tests
 .github/     -> GitHub Actions workflow
 .vscode/     -> Playwright MCP configuration
+```
 
-Test Coverage
+## Test Coverage
 
-Area
+| Area         | Coverage                                                |
+| ------------ | ------------------------------------------------------- |
+| Web          | Login, Product, Cart, Checkout, Negative Login          |
+| API          | Login, Product, Cart, Negative Tests, Schema Validation |
+| Mobile Web   | Pixel 7 device emulation                                |
+| Database     | Supabase-driven test data                               |
+| Cross-Layer  | API -> UI -> API validation                             |
+| CI/CD        | Parallel GitHub Actions execution                       |
+| Code Quality | TypeScript, ESLint, Prettier                            |
+| Reporting    | Individual + Combined Allure reports                    |
 
-Coverage
+## Authentication
 
-Web
+Playwright `storageState` is used to reuse authenticated sessions.
 
-Login, Product, Cart, Checkout, Negative Login
-
-API
-
-Login, Product, Cart, Negative Tests, Schema Validation
-
-Mobile Web
-
-Pixel 7 device emulation
-
-Database
-
-Supabase-driven test data
-
-Cross-Layer
-
-API -> UI -> API validation
-
-CI/CD
-
-Parallel GitHub Actions execution
-
-Code Quality
-
-TypeScript, ESLint, Prettier
-
-Reporting
-
-Individual + Combined Allure reports
-
-Authentication
-
-Playwright storageState is used to reuse authenticated sessions.
-
+```text
 auth/storageState.json
+```
 
-The setup project validates or regenerates the authenticated state before dependent UI projects execute.
+The setup project validates or regenerates authentication before dependent UI projects execute.
 
-Cross-Layer Flow
+## Cross-Layer Flow
 
+```text
 API Login
    |
 API Get Product
@@ -130,40 +101,43 @@ API Validate Same Cart
 UI Checkout
    |
 API Cleanup
+```
 
-Cross-layer tests run with 1 worker because they use shared account/cart state.
+Cross-layer tests run with **1 worker** because they use shared account/cart state.
 
-Running Tests
+## Running Tests
 
-All Tests
-
+```bash
 npx playwright test
+```
 
-Individual Suites
+### Individual Suites
 
+```bash
 npx playwright test --project=web
 npx playwright test --project=mobile
 npx playwright test --project=api
 npx playwright test --project=cross-layer --workers=1
+```
 
-Code Quality
+## Code Quality
 
+```bash
 npm run typecheck
 npm run lint
 npm run format:check
+```
 
-Fix formatting:
+Auto-fix:
 
-npm run format
-
-Fix ESLint issues where supported:
-
+```bash
 npm run lint:fix
+npm run format
+```
 
-CI/CD
+## CI/CD
 
-GitHub Actions runs a quality gate first:
-
+```text
 TypeScript
    |
 ESLint
@@ -178,13 +152,15 @@ Web       Mobile       API         Cross-Layer
 -----------------------------------------
                     |
             Combined Allure Report
+```
 
-Independent suites run in parallel, while the shared-state Cross-Layer suite is isolated with one worker.
+Independent suites execute in parallel while Cross-Layer execution is isolated with one worker.
 
-Reports
+## Individual & Combined Reports
 
-Each suite produces its own report artifacts:
+Each suite produces individual artifacts:
 
+```text
 playwright-report-web
 playwright-report-mobile
 playwright-report-api
@@ -194,21 +170,33 @@ allure-results-web
 allure-results-mobile
 allure-results-api
 allure-results-cross-layer
+```
 
-After all suites complete, CI merges the Allure results and generates:
+After execution, GitHub Actions merges all Allure results and generates:
 
+```text
 combined-allure-report
+```
 
-This provides one final Allure report containing Web + Mobile + API + Cross-Layer results while retaining individual suite reports for debugging.
+The combined report contains:
 
-Local Reports
+```text
+Web + Mobile + API + Cross-Layer
+```
 
+Individual reports remain available for debugging.
+
+### Local Reports
+
+```bash
 npx playwright show-report
 npm run allure:generate
 npm run allure:open
+```
 
-Database Integration
+## Database Integration
 
+```text
 Test
  |
 TestDataService
@@ -216,49 +204,46 @@ TestDataService
 DatabaseClient
  |
 Supabase PostgreSQL
+```
 
-Test data is maintained outside test logic for better reuse and maintainability.
+Test data is maintained separately from test logic for better reuse and maintainability.
 
-Playwright MCP
+## Playwright MCP
 
-Playwright MCP is configured in:
+Configured in:
 
+```text
 .vscode/mcp.json
+```
 
-It is used as a development/debugging aid and is not required for CI execution.
+MCP supports development, debugging, exploration, and locator identification while CI execution remains independent.
 
-Environment Variables
+## Environment Variables
 
+```env
 BASE_URL=https://www.demoblaze.com
 API_URL=https://api.demoblaze.com
 UI_USERNAME=<username>
 UI_PASSWORD=<password>
 SUPABASE_URL=<supabase-url>
 SUPABASE_SECRET_KEY=<supabase-secret-key>
+```
 
-Sensitive values are stored in .env locally and GitHub Secrets in CI.
+Sensitive values are maintained through `.env` locally and GitHub Secrets in CI.
 
-Future Enhancements
+## Future Enhancements
 
-Visual regression testing
+- Visual Regression Testing
+- Accessibility Testing
+- Native Mobile Automation using Appium
+- Multi-Environment Execution
+- Dockerized Execution
+- Performance Testing
 
-Accessibility baselining
+## Assignment Scope
 
-Native mobile automation with Appium
+Demonstrating Web, API, Mobile Web, Database Integration, Cross-Layer E2E, CI/CD, code-quality gates, reporting, and Playwright MCP integration.
 
-Multi-environment execution
+## Author
 
-Dockerized execution
-
-Performance testing
-
-Assignment Scope
-
-Demonstrating framework architecture, Web, API, Mobile Web, DB Integration, Cross-Layer E2E, CI/CD, code-quality gates, reporting, and MCP integration.
-
-Author
-
-Sri Prakash Narendran
-
-GitHub: sriprakashnarendran
-Repository: demoblaze-playwright-automation
+**Sri Prakash Narendran**
