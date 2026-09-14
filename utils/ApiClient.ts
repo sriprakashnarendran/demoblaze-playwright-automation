@@ -1,130 +1,25 @@
-import {
-  APIRequestContext,
-  APIResponse,
-} from "@playwright/test";
-
-import { randomUUID } from "crypto";
+import { APIRequestContext, APIResponse } from "@playwright/test";
 
 export class ApiClient {
-  constructor(
-    private readonly request: APIRequestContext,
-  ) {}
+  constructor(private readonly request: APIRequestContext) {}
 
-  static encodePassword(
-    password: string,
-  ): string {
-    return Buffer
-      .from(password, "utf8")
-      .toString("base64");
+  async get(endpoint: string): Promise<APIResponse> {
+    return this.request.get(endpoint);
   }
 
-  static extractAuthToken(
-    loginResponseBody: string,
-  ): string {
-    const match =
-      loginResponseBody.match(
-        /Auth_token:\s*([^"]+)/,
-      );
-
-    if (!match?.[1]) {
-      throw new Error(
-        `Unable to extract Auth_token from response: ${loginResponseBody}`,
-      );
-    }
-
-    return match[1].trim();
+  async post(endpoint: string, data?: Record<string, unknown>): Promise<APIResponse> {
+    return this.request.post(endpoint, { data });
   }
 
-  async signup(
-    username: string,
-    password: string,
-  ): Promise<APIResponse> {
-    return this.request.post(
-      "/signup",
-      {
-        data: {
-          username,
-          password:
-            ApiClient.encodePassword(
-              password,
-            ),
-        },
-      },
-    );
+  async put(endpoint: string, data?: Record<string, unknown>): Promise<APIResponse> {
+    return this.request.put(endpoint, { data });
   }
 
-  async login(
-    username: string,
-    password: string,
-  ): Promise<APIResponse> {
-    return this.request.post(
-      "/login",
-      {
-        data: {
-          username,
-          password:
-            ApiClient.encodePassword(
-              password,
-            ),
-        },
-      },
-    );
+  async patch(endpoint: string, data?: Record<string, unknown>): Promise<APIResponse> {
+    return this.request.patch(endpoint, { data });
   }
 
-  async getProduct(
-    productId: number,
-  ): Promise<APIResponse> {
-    return this.request.post(
-      "/view",
-      {
-        data: {
-          id: String(productId),
-        },
-      },
-    );
-  }
-
-  async addToCart(
-    authToken: string,
-    productId: number,
-  ): Promise<APIResponse> {
-    return this.request.post(
-      "/addtocart",
-      {
-        data: {
-          id: randomUUID(),
-          cookie: authToken,
-          prod_id: productId,
-          flag: true,
-        },
-      },
-    );
-  }
-
-  async viewCart(
-    authToken: string,
-  ): Promise<APIResponse> {
-    return this.request.post(
-      "/viewcart",
-      {
-        data: {
-          cookie: authToken,
-          flag: true,
-        },
-      },
-    );
-  }
-
-  async deleteCart(
-    authToken: string,
-  ): Promise<APIResponse> {
-    return this.request.post(
-      "/deletecart",
-      {
-        data: {
-          cookie: authToken,
-        },
-      },
-    );
+  async delete(endpoint: string, data?: Record<string, unknown>): Promise<APIResponse> {
+    return this.request.delete(endpoint, { data });
   }
 }
