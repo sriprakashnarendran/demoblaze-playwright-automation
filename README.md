@@ -198,7 +198,7 @@ Supported with:
 
 * GitHub Actions
 
-'''''''*****And can extend for Jenkins,Buildkite,AWS*****'''''''''
+'''''''*****Can extend for Jenkins,Buildkite,AWS*****'''''''''
 
 Secrets are stored in environment variables / CI credentials and are not hardcoded.
 
