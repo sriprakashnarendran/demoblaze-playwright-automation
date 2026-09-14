@@ -19,7 +19,12 @@ export interface PurchaseData {
 export class TestDataService {
   private readonly db = new DatabaseClient();
   async getPurchaseData(scenario = "purchase_default"): Promise<PurchaseData> {
-    const { data, error } = await this.db.client.from("test_data").select("data").eq("scenario", scenario).eq("active", true).single();
+    const { data, error } = await this.db.client
+      .from("test_data")
+      .select("data")
+      .eq("scenario", scenario)
+      .eq("active", true)
+      .single();
     if (error) throw new Error(`Unable to get test data: ${error.message}`);
     if (!data) throw new Error(`Test data not found for scenario: ${scenario}`);
     return data.data as PurchaseData;

@@ -1,17 +1,19 @@
+[![Playwright Tests](https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/workflows/playwright.yml/badge.svg)](https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/workflows/playwright.yml)
+
 # Demoblaze Playwright Automation Framework
 
 Playwright + TypeScript framework for **UI, API, Mobile, Database and Cross-Layer E2E testing** of Demoblaze.
 
 ## Tech Stack
 
-* Playwright + TypeScript
-* Page Object Model
-* Custom Fixtures
-* APIRequestContext
-* Supabase PostgreSQL
-* Allure + Playwright HTML Report
-* GitHub Actions
-* Playwright MCP
+- Playwright + TypeScript
+- Page Object Model
+- Custom Fixtures
+- APIRequestContext
+- Supabase PostgreSQL
+- Allure + Playwright HTML Report
+- GitHub Actions
+- Playwright MCP
 
 ## Project Structure
 
@@ -98,8 +100,7 @@ Supabase
 Example:
 
 ```ts
-const data = await new TestDataService()
-  .getPurchaseData("purchase_default");
+const data = await new TestDataService().getPurchaseData("purchase_default");
 ```
 
 Configuration is separated as:
@@ -167,13 +168,13 @@ API → https://api.demoblaze.com
 
 ## Framework Design
 
-* **Page Objects** → UI actions and locators
-* **ApiClient** → Generic HTTP methods
-* **ApiHelper** → API business logic
-* **AuthHelper** → Authentication and storage state
-* **DatabaseClient** → Supabase connection
-* **TestDataService** → Database test-data retrieval
-* **Fixtures** → Reusable UI/API objects
+- **Page Objects** → UI actions and locators
+- **ApiClient** → Generic HTTP methods
+- **ApiHelper** → API business logic
+- **AuthHelper** → Authentication and storage state
+- **DatabaseClient** → Supabase connection
+- **TestDataService** → Database test-data retrieval
+- **Fixtures** → Reusable UI/API objects
 
 ## Reports
 
@@ -196,9 +197,9 @@ Failures retain screenshots, videos, traces and API attachments.
 
 Supported with:
 
-* GitHub Actions
+- GitHub Actions
 
-'''''''*****Can extend for Jenkins,Buildkite,AWS*****'''''''''
+'''''''_****And can extend for Jenkins,Buildkite,AWS****_'''''''''
 
 Secrets are stored in environment variables / CI credentials and are not hardcoded.
 

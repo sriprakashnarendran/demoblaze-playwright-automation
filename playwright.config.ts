@@ -10,7 +10,7 @@ export default defineConfig({
   expect: { timeout: config.timeout.expect },
   fullyParallel: true,
   workers: process.env.CI ? 2 : 2,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 1 : 0,
   forbidOnly: !!process.env.CI,
   reporter: [
     ["list"],
@@ -20,7 +20,7 @@ export default defineConfig({
   use: {
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
-    video: "on",
+    video: "retain-on-failure",
     actionTimeout: config.timeout.action,
     navigationTimeout: config.timeout.navigation,
   },
@@ -47,18 +47,18 @@ export default defineConfig({
       testDir: "./tests/api",
       use: { baseURL: config.api.baseURL },
     },
-     {
-    name: "cross-layer",
-    testDir: "./tests/e2e",
-    dependencies: ["setup"],
-    fullyParallel: false,
-    workers: 1,
-    use: {
-      ...devices["Desktop Chrome"],
-      storageState: authFile,
-      baseURL: config.ui.baseURL
-    }
-  },
+    {
+      name: "cross-layer",
+      testDir: "./tests/e2e",
+      dependencies: ["setup"],
+      fullyParallel: false,
+      workers: 1,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: authFile,
+        baseURL: config.ui.baseURL,
+      },
+    },
   ],
   outputDir: "test-results",
 });

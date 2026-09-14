@@ -14,5 +14,4 @@ test("@smoke UI E2E - validate authenticated storage session", async ({ homePage
   await allure.step("Validate stored session user", async () => {
     await homePage.expectLoggedIn(config.ui.username);
   });
-  
 });

@@ -1,46 +1,133 @@
 name: Playwright Tests
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+
   pull_request:
-    branches: [main]
+    branches:
+      - main
+
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playwright-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    timeout-minutes: 30
+  quality:
+    name: Code Quality
     runs-on: ubuntu-latest
-    env:
-      BASE_URL: https://www.demoblaze.com
-      API_URL: https://api.demoblaze.com
-      UI_USERNAME: ${{ secrets.UI_USERNAME }}
-      UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+    timeout-minutes: 10
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
+
       - name: Install dependencies
         run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
+
+      - name: TypeScript validation
+        run: npm run typecheck
+
+      - name: ESLint validation
+        run: npm run lint
+
+      - name: Prettier validation
+        run: npm run format:check
+
+  playwright:
+    name: ${{ matrix.name }}
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Web Tests
+            project: web
+            workers: 2
+            artifact: web
+
+          - name: Mobile Tests
+            project: mobile
+            workers: 2
+            artifact: mobile
+
+          - name: API Tests
+            project: api
+            workers: 2
+            artifact: api
+
+          - name: Cross Layer Tests
+            project: cross-layer
+            workers: 1
+            artifact: cross-layer
+
+    env:
+      BASE_URL: https://www.demoblaze.com
+      API_URL: https://api.demoblaze.com
+
+      UI_USERNAME: ${{ secrets.UI_USERNAME }}
+      UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
+
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run ${{ matrix.name }}
+        run: npx playwright test --project=${{ matrix.project }} --workers=${{ matrix.workers }}
+
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.artifact }}
           path: playwright-report/
           retention-days: 30
+          if-no-files-found: ignore
+
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: allure-results
+          name: allure-results-${{ matrix.artifact }}
           path: allure-results/
           retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-results-${{ matrix.artifact }}
+          path: test-results/
+          retention-days: 15
+          if-no-files-found: ignore
