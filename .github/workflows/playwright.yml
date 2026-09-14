@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
-
   workflow_dispatch:
 
 permissions:
@@ -105,29 +103,82 @@ jobs:
       - name: Run ${{ matrix.name }}
         run: npx playwright test --project=${{ matrix.project }} --workers=${{ matrix.workers }}
 
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: playwright-report-${{ matrix.artifact }}
-          path: playwright-report/
-          retention-days: 30
-          if-no-files-found: ignore
-
       - name: Upload Allure results
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-${{ matrix.artifact }}
           path: allure-results/
           retention-days: 30
           if-no-files-found: ignore
 
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v6
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          name: test-results-${{ matrix.artifact }}
-          path: test-results/
-          retention-days: 15
+          name: playwright-report-${{ matrix.artifact }}
+          path: playwright-report/
+          retention-days: 30
           if-no-files-found: ignore
+
+  combined-allure:
+    name: Combined Allure Report
+    needs: playwright
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download all Allure results
+        uses: actions/download-artifact@v8
+        with:
+          pattern: allure-results-*
+          path: combined-allure-results
+          merge-multiple: true
+
+      - name: Verify merged Allure results
+        run: |
+          echo "Merged Allure result files:"
+          find combined-allure-results -type f | head -50
+          echo "Total files:"
+          find combined-allure-results -type f | wc -l
+
+      - name: Generate combined Allure report
+        run: |
+          npx allure generate combined-allure-results \
+            --clean \
+            -o combined-allure-report
+
+      - name: Upload combined Allure report
+        uses: actions/upload-artifact@v7
+        with:
+          name: combined-allure-report
+          path: combined-allure-report/
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload combined Allure results
+        uses: actions/upload-artifact@v7
+        with:
+          name: combined-allure-results
+          path: combined-allure-results/
+          retention-days: 30
+          if-no-files-found: error
