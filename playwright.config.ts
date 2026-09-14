@@ -1,6 +1,9 @@
-import { defineConfig, devices } from "@playwright/test";
-import path from "path";
+import {
+  defineConfig,
+  devices,
+} from "@playwright/test";
 
+import path from "path";
 import { config } from "./config/config";
 
 const authFile = path.resolve(
@@ -19,7 +22,9 @@ export default defineConfig({
 
   fullyParallel: false,
 
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI
+    ? 2
+    : 0,
 
   reporter: [
     ["list"],
@@ -27,7 +32,8 @@ export default defineConfig({
     [
       "html",
       {
-        outputFolder: "playwright-report",
+        outputFolder:
+          "playwright-report",
         open: "never",
       },
     ],
@@ -35,73 +41,98 @@ export default defineConfig({
     [
       "allure-playwright",
       {
-        resultsDir: "allure-results",
+        resultsDir:
+          "allure-results",
       },
     ],
   ],
 
   use: {
-    trace: "retain-on-failure",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    trace:
+      "retain-on-failure",
 
-    actionTimeout: config.timeout.action,
-    navigationTimeout: config.timeout.navigation,
+    screenshot:
+      "only-on-failure",
+
+    video:
+      "retain-on-failure",
+
+    actionTimeout:
+      config.timeout.action,
+
+    navigationTimeout:
+      config.timeout.navigation,
   },
 
   projects: [
     {
       name: "setup",
 
-      testMatch: /auth\.setup\.ts/,
+      testMatch:
+        "**/*.setup.ts",
 
       use: {
-        baseURL: config.ui.baseURL,
+        baseURL:
+          config.ui.baseURL,
       },
     },
 
     {
       name: "web",
 
-      testDir: "./tests/ui",
+      testDir:
+        "./tests/ui",
 
-      dependencies: ["setup"],
+      dependencies: [
+        "setup",
+      ],
 
       use: {
-        ...devices["Desktop Chrome"],
+        ...devices[
+          "Desktop Chrome"
+        ],
 
-        baseURL: config.ui.baseURL,
+        baseURL:
+          config.ui.baseURL,
 
-        storageState: authFile,
+        storageState:
+          authFile,
       },
     },
 
     {
       name: "mobile",
 
-      testDir: "./tests/ui",
+      testDir:
+        "./tests/ui",
 
-      dependencies: ["setup"],
+      dependencies: [
+        "setup",
+      ],
 
       use: {
-        ...devices["Pixel 7"],
+        ...devices[
+          "Pixel 7"
+        ],
 
-        baseURL: config.ui.baseURL,
+        baseURL:
+          config.ui.baseURL,
 
-        storageState: authFile,
+        storageState:
+          authFile,
       },
     },
 
     {
       name: "api",
 
-      testDir: "./tests/api",
+      testDir:
+        "./tests/api",
 
       use: {
-        baseURL: config.api.baseURL,
+        baseURL:
+          config.api.baseURL,
       },
     },
   ],
-
-  outputDir: "test-results",
 });
