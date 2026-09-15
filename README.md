@@ -1060,7 +1060,7 @@ GitHub Actions
 ```
 
 **Execution Video:**  
-https://github.com/user-attachments/assets/38f09a9f-e003-46dc-8b78-1779a97f5408
+[110cb4cc589071add169309da17759e10957644d.webm](https://github.com/user-attachments/assets/9a0cacef-6154-4fbc-9c35-60a2230ab8d0)
 
 ---
 
