@@ -33,16 +33,16 @@ The framework is designed with focus on:
 
 # Test Coverage
 
-| Test Area | Coverage |
-|---|---|
-| Web | Login, Negative Login, Product Selection, Cart, Checkout |
-| Mobile Web | Login, Product Selection, Cart, Checkout using Pixel 7 emulation |
-| API | Authentication, Product, Cart, Negative Scenarios |
-| API Contract | Response schema validation using Zod |
-| Database | External test-data retrieval from Supabase PostgreSQL |
-| Cross-Layer | API and Web business-state validation |
-| CI/CD | Automated execution through GitHub Actions |
-| Reporting | Individual suite reports and Combined Allure Report |
+| Test Area    | Coverage                                                         |
+| ------------ | ---------------------------------------------------------------- |
+| Web          | Login, Negative Login, Product Selection, Cart, Checkout         |
+| Mobile Web   | Login, Product Selection, Cart, Checkout using Pixel 7 emulation |
+| API          | Authentication, Product, Cart, Negative Scenarios                |
+| API Contract | Response schema validation using Zod                             |
+| Database     | External test-data retrieval from Supabase PostgreSQL            |
+| Cross-Layer  | API and Web business-state validation                            |
+| CI/CD        | Automated execution through GitHub Actions                       |
+| Reporting    | Individual suite reports and Combined Allure Report              |
 
 ---
 
@@ -146,25 +146,25 @@ Cleanup through API
 
 # Test Scenarios
 
-| Area | Scenario | Expected Result |
-|---|---|---|
-| Web | Login with valid credentials | User successfully logs in |
-| Web | Login with invalid credentials | Appropriate login error is displayed |
-| Web | Select a product | Correct product details are displayed |
-| Web | Add selected product to cart | Product is successfully added |
-| Web | Complete checkout | Purchase confirmation is displayed |
-| Mobile Web | Login using Pixel 7 emulation | User successfully logs in |
-| Mobile Web | Select and add product | Product is successfully added |
-| Mobile Web | Complete checkout | Purchase confirmation is displayed |
-| API | Login with valid credentials | Authentication token is returned |
-| API | Login with invalid credentials | Expected API error is returned |
-| API | Retrieve product details | Correct product information is returned |
-| API | Validate product response schema | Response matches the expected Zod schema |
-| API | Add product to cart | Product is added successfully |
-| API | Validate cart | Added product is available in cart |
-| API | Cleanup cart | Cart data is removed successfully |
-| Database | Retrieve purchase test data | Required test data is returned from Supabase |
-| Cross-Layer | Add product through API and validate through Web | Same business state is reflected in Web |
+| Area        | Scenario                                         | Expected Result                              |
+| ----------- | ------------------------------------------------ | -------------------------------------------- |
+| Web         | Login with valid credentials                     | User successfully logs in                    |
+| Web         | Login with invalid credentials                   | Appropriate login error is displayed         |
+| Web         | Select a product                                 | Correct product details are displayed        |
+| Web         | Add selected product to cart                     | Product is successfully added                |
+| Web         | Complete checkout                                | Purchase confirmation is displayed           |
+| Mobile Web  | Login using Pixel 7 emulation                    | User successfully logs in                    |
+| Mobile Web  | Select and add product                           | Product is successfully added                |
+| Mobile Web  | Complete checkout                                | Purchase confirmation is displayed           |
+| API         | Login with valid credentials                     | Authentication token is returned             |
+| API         | Login with invalid credentials                   | Expected API error is returned               |
+| API         | Retrieve product details                         | Correct product information is returned      |
+| API         | Validate product response schema                 | Response matches the expected Zod schema     |
+| API         | Add product to cart                              | Product is added successfully                |
+| API         | Validate cart                                    | Added product is available in cart           |
+| API         | Cleanup cart                                     | Cart data is removed successfully            |
+| Database    | Retrieve purchase test data                      | Required test data is returned from Supabase |
+| Cross-Layer | Add product through API and validate through Web | Same business state is reflected in Web      |
 
 ---
 
@@ -447,12 +447,12 @@ It also improves reusability and maintainability.
 
 The framework uses **Playwright built-in fixtures, custom test fixtures, and an authentication setup project**.
 
-| Type | Used | Why |
-|---|---|---|
-| Built-in Fixtures | `page`, `browser`, `playwright` | Browser/page management and API context creation |
+| Type                 | Used                                                             | Why                                                                            |
+| -------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Built-in Fixtures    | `page`, `browser`, `playwright`                                  | Browser/page management and API context creation                               |
 | Custom Test Fixtures | `homePage`, `loginPage`, `productPage`, `cartPage`, `apiRequest` | Reusable Page Objects and API request context are injected directly into tests |
-| Authentication Setup | `auth.setup.ts` with `AuthHelper` | Validates or creates the authenticated session before dependent tests execute |
-| Storage State | `auth/storageState.json` | Reuses authenticated browser state and avoids repeated UI login |
+| Authentication Setup | `auth.setup.ts` with `AuthHelper`                                | Validates or creates the authenticated session before dependent tests execute  |
+| Storage State        | `auth/storageState.json`                                         | Reuses authenticated browser state and avoids repeated UI login                |
 
 ### Fixture Flow
 
@@ -1060,21 +1060,14 @@ GitHub Actions
 ```
 
 **Execution Video:**  
-`<ADD_EXECUTION_VIDEO_LINK>`
-
----
-
-## Allure Report
-
-**Execution Report:**  
-`<ADD_ALLURE_REPORT_LINK>`
+`https://github.com/user-attachments/assets/38f09a9f-e003-46dc-8b78-1779a97f5408`
 
 ---
 
 ## GitHub Actions
 
 **Latest CI Execution:**  
-`<ADD_GITHUB_ACTIONS_RUN_LINK>`
+`https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/runs/34924432595`
 
 ---
 
@@ -1172,4 +1165,4 @@ The implementation focuses on:
 
 # Author
 
-**Sri Prakash Narendran** 
+**Sri Prakash Narendran**
