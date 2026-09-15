@@ -1060,14 +1060,14 @@ GitHub Actions
 ```
 
 **Execution Video:**  
-`https://github.com/user-attachments/assets/38f09a9f-e003-46dc-8b78-1779a97f5408`
+https://github.com/user-attachments/assets/38f09a9f-e003-46dc-8b78-1779a97f5408
 
 ---
 
 ## GitHub Actions
 
 **Latest CI Execution:**  
-`https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/runs/34924432595`
+[View Latest CI Execution](https://github.com/sriprakashnarendran/demoblaze-playwright-automation/actions/runs/34924432595)
 
 ---
 
